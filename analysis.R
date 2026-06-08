@@ -1,5 +1,5 @@
-campaign<-read.csv("C:\\Users\\monis\\OneDrive\\Desktop\\SCM\\Campaign Data.csv")
-heart<-read.csv("C:\\Users\\monis\\OneDrive\\Desktop\\SCM\\heart (1).csv")
+campaign<-read.csv("C:\\Users\\OneDrive\\Desktop\\SCM\\Campaign Data.csv")
+heart<-read.csv("C:\\Users\\OneDrive\\Desktop\\SCM\\heart (1).csv")
 
 #--------------------------------------------------
 campaign
@@ -31,7 +31,3 @@ model_campaign <- lm(response~ ., data = data_training[])
 
 model_campaign
 summary(model_campaign)
-
-
-
-
