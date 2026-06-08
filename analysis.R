@@ -1,33 +1,51 @@
-campaign<-read.csv("C:\\Users\\OneDrive\\Desktop\\SCM\\Campaign Data.csv")
-heart<-read.csv("C:\\Users\\OneDrive\\Desktop\\SCM\\heart (1).csv")
+# ----------------------------------
+# Campaign Analysis (R)
+# ----------------------------------
 
-#--------------------------------------------------
-campaign
+library(dplyr)
+library(ggplot2)
+library(caret)
+
+# Load data
+campaign <- read.csv("Campaign Data.csv")
+
+# ----------------------------------
+# Basic EDA
+# ----------------------------------
+
 summary(campaign)
 str(campaign)
-is.na(campaign)
+
+# Missing values
 sum(is.na(campaign))
 
-plot_missing(campaign)
-
+# Boxplots
 boxplot(campaign$age, campaign$duration, campaign$campaign, campaign$pdays,
         main = "Boxplot",
-        names = c("Age", "duration", "campaign", "pdays"))
-boxplot(campaign$previous , campaign$emp.var.rate, campaign$cons.price.idx, campaign$ cons.conf.idx,
-        main = "Boxplot",
-        names = c("previous ", "emp.var.rate", "cons.price.idx", " cons.conf.idx"))
+        names = c("Age", "Duration", "Campaign", "Pdays"))
 
-#Model building
+# ----------------------------------
+# Train-Test Split
+# ----------------------------------
 
-#41188 obs 70% - 28,831
-
-campaign<-data.frame(lapply(campaign, factor))
 set.seed(1234)
-data_mixed<-campaign[order(runif(1:41188)),]
-data_training<-campaign[1:28831,]
-data_testing<-campaign[28832:200,]
 
-model_campaign <- lm(response~ ., data = data_training[])
+trainIndex <- createDataPartition(campaign$response, p = 0.7, list = FALSE)
 
-model_campaign
+data_training <- campaign[trainIndex, ]
+data_testing  <- campaign[-trainIndex, ]
+
+# ----------------------------------
+# Logistic Regression Model
+# ----------------------------------
+
+model_campaign <- glm(response ~ ., data = data_training, family = binomial)
+
 summary(model_campaign)
+
+# Predictions
+prob <- predict(model_campaign, data_testing, type = "response")
+pred <- ifelse(prob > 0.5, 1, 0)
+
+# Confusion Matrix
+confusionMatrix(as.factor(pred), as.factor(data_testing$response))
